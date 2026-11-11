@@ -2,8 +2,12 @@
 /* ---------- Louis Miguel Terrago — portfolio ----------
    Run locally:  php -S localhost:8000   (then open http://localhost:8000)
    Edit the arrays below to change content. */
-session_start();
 function h($s){return htmlspecialchars((string)$s,ENT_QUOTES,'UTF-8');}
+
+// BACKGROUND IMAGE: replace assets/background.jpg with your own image (or change this path).
+$bgImage='assets/background.jpg';
+$bgDim=0.55;   // 0 = image at full brightness, 1 = fully dark. Raise it if text is hard to read.
+$hasBg=$bgImage&&is_file(__DIR__.'/'.$bgImage);
 
 $me=[
   'first'=>'Louis Miguel','last'=>'Terrago','role'=>'BSIT Student',
@@ -13,30 +17,23 @@ $me=[
 ];
 // Replace these placeholders with your real projects and milestones.
 $achievements=[
-  ['The Capital Barbershop','A portfolio and appointment booking website for a local barbershop.'],
   ['TOP 10 CEISSAFP Ideathon 2026','Held in Camp Aguinaldo, this event challenged students to develop innovative solutions for real-world problems.'],
   ['Pitch Leader','In ideathon, I led the pitch team, crafting compelling presentations that effectively communicated our ideas to judges and stakeholders.'],
   ['Web Development Intern','Gained hands-on experience in web development, contributing to real projects and enhancing my coding skills.'],
   ['Graphic Design Projects','Created visually appealing graphics for various clients, honing my design skills and understanding of visual communication.'],
 ];
 
-// Contact form (saved to data/messages.jsonl)
-if(empty($_SESSION['t']))$_SESSION['t']=bin2hex(random_bytes(16));
-if($_SERVER['REQUEST_METHOD']==='POST'){
-  $name=trim($_POST['name']??'');$mail=trim($_POST['email']??'');$msg=trim($_POST['message']??'');
-  if(!hash_equals($_SESSION['t'],$_POST['t']??'')||!empty($_POST['website'])){$_SESSION['flash']=['err','Something went wrong. Reload the page and try again.'];}
-  elseif($name===''||$msg===''||!filter_var($mail,FILTER_VALIDATE_EMAIL)){$_SESSION['flash']=['err','Add your name, a valid email, and a message.'];}
-  else{
-    $dir=__DIR__.'/data';
-    if(!is_dir($dir)){mkdir($dir,0755,true);file_put_contents("$dir/.htaccess","Require all denied\n");}
-    file_put_contents("$dir/messages.jsonl",json_encode(['at'=>date('c'),'name'=>mb_substr($name,0,100),'email'=>$mail,'message'=>mb_substr($msg,0,3000)])."\n",FILE_APPEND|LOCK_EX);
-    // mail($me['email'],"Portfolio message from $name",$msg,"Reply-To: $mail"); // enable on a server with mail set up
-    $_SESSION['flash']=['ok','Message sent. Thanks for reaching out.'];
-  }
-  header('Location: '.strtok($_SERVER['REQUEST_URI'],'?').'#contact');exit;
-}
-$flash=$_SESSION['flash']??null;unset($_SESSION['flash']);
+// Your intro video: paste the YouTube video ID here (the part after "v=" in the link, e.g. dQw4w9WgXcQ).
+// While it is empty, a placeholder box is shown under the About text.
+$youtubeId='4zvdGliW8Ek';
 
+// Projects: replace these placeholders. 'image' is optional (e.g. assets/projects/shop.jpg), 'link' is optional.
+$projects=[
+  ['The Capital Barbershop','A portfolio and appointment booking website for a local barbershop.','HTML · CSS · JS','SUPABASE','assets/projects/project1.jpg'],
+  ['House of Origami','Origami school portfolio website.','HTML · CSS · JS','','assets/projects/project2.jpg'],
+];
+
+// The contact form is sent with EmailJS (see script.js), so no PHP form handling is needed.
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -54,7 +51,9 @@ html{scroll-behavior:smooth;background:var(--ink);font-size:150%}
 body{font:300 1rem/1.6 Outfit,system-ui,sans-serif;color:var(--text);background:var(--ink)}
 .stage{position:fixed;inset:0;z-index:0}
 .stage{background:linear-gradient(112deg,transparent 52%,rgba(20,32,120,.32) 52.2%,rgba(20,32,120,.32) 60%,transparent 60.2%),linear-gradient(98deg,transparent 70%,rgba(10,17,72,.7) 70.2%,rgba(10,17,72,.7) 77%,transparent 77.2%),radial-gradient(ellipse at 72% 50%,#142070 0%,transparent 62%),var(--ink)}
-.stage canvas{width:100%;height:100%;display:block;opacity:0;transition:opacity 1.2s}
+.stage .bg{position:absolute;left:0;right:0;top:-6vh;bottom:-6vh;background:center/cover no-repeat;will-change:transform}
+.stage .shade{position:absolute;inset:0;pointer-events:none;background:rgba(4,6,26,<?=(float)$bgDim?>)}
+.stage canvas{position:relative;width:100%;height:100%;display:block;opacity:0;transition:opacity 1.2s}
 .stage.ready canvas{opacity:1}
 .load{position:fixed;right:8vw;top:50%;z-index:6;font-size:.8rem;color:var(--mist)}
 .stage::after{pointer-events:none;content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,6,26,.9),rgba(4,6,26,.45) 50%,transparent 85%),radial-gradient(ellipse at 70% 50%,transparent 40%,rgba(4,6,26,.7))}
@@ -89,13 +88,24 @@ h2{font-size:clamp(2.2rem,4.4vw,3.4rem)}
 .hint i::after{content:"";position:absolute;left:50%;top:5px;width:2px;height:5px;margin-left:-1px;background:var(--ice);border-radius:2px;animation:wheel 1.8s ease-in-out infinite}
 @keyframes wheel{0%{opacity:0;transform:translateY(0)}40%{opacity:1}100%{opacity:0;transform:translateY(8px)}}
 .panel{position:relative}
-#achievements .copy,#contact .copy{margin-left:auto;margin-right:5vw;width:min(36rem,43vw)}
-#achievements .copy{padding:1.8rem 2rem;border:1px solid rgba(180,192,255,.18);border-radius:24px;background:rgba(5,9,35,.56);backdrop-filter:blur(14px)}
+#achievements .copy,#projects .copy,#contact .copy{margin-left:auto;margin-right:5vw;width:min(36rem,43vw)}
+#achievements .copy,#projects .copy{padding:1.8rem 2rem;border:1px solid rgba(180,192,255,.18);border-radius:24px;background:rgba(5,9,35,.56);backdrop-filter:blur(14px)}
 #contact .copy{padding:1.8rem 2rem;border:1px solid rgba(180,192,255,.18);border-radius:24px;background:rgba(5,9,35,.62);backdrop-filter:blur(14px)}
 .ach{margin-top:1.6rem;display:grid;gap:1rem;list-style:none;padding:0}
 .ach li{border-left:2px solid var(--blue);padding-left:1rem}
 .ach b{display:block;font-weight:500}.ach span{font-size:.9rem;color:#9fabdc}
 .ach[hidden],form[hidden]{display:none}
+.video{margin-top:1.6rem;width:min(100%,22rem);aspect-ratio:16/9;border-radius:16px;overflow:hidden;border:1px solid rgba(180,192,255,.25);background:rgba(10,16,48,.6)}
+.video iframe{width:100%;height:100%;border:0;display:block}
+.video.ph{display:grid;place-items:center;text-align:center;border:2px dashed rgba(180,192,255,.4);color:var(--mist);font-size:.75rem;padding:1rem}
+.video.ph svg{width:2.4rem;height:2.4rem;fill:none;stroke:var(--ice);stroke-width:1.5;margin-bottom:.4rem}
+.proj{margin-top:1.4rem;display:grid;gap:.9rem}
+.card{display:grid;grid-template-columns:6.5rem 1fr;gap:1rem;align-items:center;padding:.8rem;border:1px solid rgba(180,192,255,.18);border-radius:16px;background:rgba(10,16,48,.55)}
+.thumb{aspect-ratio:16/10;border-radius:10px;border:1px dashed rgba(180,192,255,.4);display:grid;place-items:center;font-size:.6rem;text-align:center;color:var(--mist);background:rgba(84,104,255,.08) center/cover no-repeat}
+.thumb.has{border-style:solid;color:transparent}
+.card b{display:block;font-weight:500}.card p{font-size:.82rem;color:#9fabdc;line-height:1.4}
+.card small{display:block;margin-top:.2rem;font-size:.7rem;color:var(--ice)}
+.card a{display:inline-block;margin-top:.3rem;font-size:.78rem;color:var(--blue);text-decoration:none}
 .info{margin-top:2rem;display:grid;gap:1rem}
 .info div{display:flex;gap:1rem;align-items:center;font-size:.85rem}
 .info em{font-style:normal;display:block;font-size:.7rem;color:var(--mist)}
@@ -114,7 +124,7 @@ footer{position:absolute;left:8vw;right:8vw;bottom:1.6rem;display:flex;justify-c
 footer img{width: 3rem;}
 @media(max-width:800px){
   html{font-size:100%;}
-  #achievements .copy,#contact .copy{width:100%;padding:1.2rem;background:rgba(5,9,35,.8);margin-bottom:9rem;margin-right: 0;}
+  #achievements .copy,#projects .copy,#contact .copy{width:100%;padding:1.2rem;background:rgba(5,9,35,.8);margin-bottom:9rem;margin-right: 0;}
   nav{gap:1rem}.count{display:none}
   .panel{align-items:flex-end;padding-bottom:6rem}
   .stage::after{background:linear-gradient(0deg,rgba(4,6,26,.95),rgba(4,6,26,.55) 55%,transparent)}
@@ -237,7 +247,10 @@ footer img{width: 3rem;}
 </head>
 <body>
 
-<div class="stage"><canvas id="gl" aria-label="3D electric guitar. Click it to play a chord."></canvas></div>
+<div class="stage">
+  <?php if($hasBg){?><div class="bg" id="bg" style="background-image:url('<?=h($bgImage)?>')"></div><div class="shade"></div><?php }?>
+  <canvas id="gl" aria-label="3D acoustic guitar. Click it to play a chord."></canvas>
+</div>
 <div class="load" id="load" role="status">Tuning up… 0%</div>
 
 <header>
@@ -246,7 +259,8 @@ footer img{width: 3rem;}
     <li><a href="#home" class="active" data-strum="0">Home</a></li>
     <li><a href="#about" data-strum="1">About me</a></li>
     <li><a href="#achievements" data-strum="2">Achievements</a></li>
-    <li><a href="#contact" data-strum="3">Contact</a></li>
+    <li><a href="#projects" data-strum="3">Projects</a></li>
+    <li><a href="#contact" data-strum="4">Contact</a></li>
   </nav>
     <!-- Mobile hamburger button -->
   <button class="menu-toggle" id="menuToggle"
@@ -270,13 +284,14 @@ footer img{width: 3rem;}
           <a href="#home">Home</a>
           <a href="#about">About</a>
           <a href="#achievements">Achievements</a>
+          <a href="#projects">Projects</a>
           <a href="#contact">Contact</a>
       </nav>
 
       <p class="sidebar-footer">Louis Miguel Terrago © 2026</p>
   </aside>
 </header>
-<div class="count" aria-hidden="true"><i></i><div><b id="cur">01</b><br><span>04</span></div><i></i></div>
+<div class="count" aria-hidden="true"><i></i><div><b id="cur">01</b><br><span>05</span></div><i></i></div>
 
 <main>
   <section class="panel" id="home">
@@ -298,6 +313,11 @@ footer img{width: 3rem;}
       <button class="btn chord" id="play" type="button" aria-live="polite">
         <svg viewBox="0 0 14 14" fill="currentColor"><path d="M3 1l9 6-9 6z"/></svg><span>Play a chord</span><small id="cname">Em</small>
       </button>
+      <?php if($youtubeId){?>
+      <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/<?=h($youtubeId)?>?rel=0" title="Intro video" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+      <?php }else{?>
+      <div class="video ph"><div><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="M10 9.500l5 2.500-5 2.500z"/></svg><br>Intro video placeholder<br>Set <b>$youtubeId</b> at the top of index.php</div></div>
+      <?php }?>
     </div>
   </section>
 
@@ -313,20 +333,35 @@ footer img{width: 3rem;}
     </div>
   </section>
 
+  <section class="panel" id="projects">
+    <div class="copy">
+      <p class="tag">Projects</p>
+      <h2>Things I've<br><span class="hl">built.</span></h2>
+      <p class="lead">A few projects I'm proud of. Replace these placeholders with your own work.</p>
+      <div class="proj">
+        <?php foreach($projects as [$t,$d,$stack,$link,$img]){$has=$img&&is_file(__DIR__.'/'.$img);?>
+        <article class="card">
+          <div class="thumb<?=$has?' has':''?>" <?=$has?'style="background-image:url(\''.h($img).'\')"':''?>><?=$has?'':'Project image'?></div>
+          <div><b><?=h($t)?></b><p><?=h($d)?></p><small><?=h($stack)?></small><?php if($link){?><a href="<?=h($link)?>" target="_blank" rel="noopener">View project →</a><?php }?></div>
+        </article>
+        <?php }?>
+      </div>
+    </div>
+  </section>
+
   <section class="panel" id="contact">
     <div class="copy">
       <p class="tag">Contact</p>
       <h2>Let's <span class="hl">connect.</span></h2>
       <p class="lead">Have a project in mind? <a href="#contact" id="cLink" style="color:var(--blue);text-decoration:none">Let's make it real.</a></p>
-      <button class="btn" id="msgBtn" type="button" aria-expanded="<?=$flash?'true':'false'?>" aria-controls="msgForm">Send a message <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 1l6 6-6 6"/></svg></button>
-      <?php if($flash){?><p class="note <?=$flash[0]==='err'?'err':''?>" role="status"><?=h($flash[1])?></p><?php }?>
-      <form id="msgForm" method="post" <?=$flash?'':'hidden'?>>
-        <input type="hidden" name="t" value="<?=h($_SESSION['t'])?>">
+      <button class="btn" id="msgBtn" type="button" aria-expanded="false" aria-controls="msgForm">Send a message <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 1l6 6-6 6"/></svg></button>
+      <p class="note" id="formNote" role="status" hidden></p>
+      <form class="contact-form" id="msgForm" hidden>
         <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <input name="name" placeholder="Your name" required maxlength="100" aria-label="Your name">
-        <input name="email" type="email" placeholder="Your email" required aria-label="Your email">
+        <input name="from_name" placeholder="Your name" required maxlength="100" aria-label="Your name">
+        <input name="reply_to" type="email" placeholder="Your email" required aria-label="Your email">
         <textarea name="message" rows="4" placeholder="Your message" required maxlength="3000" aria-label="Your message"></textarea>
-        <button class="btn" type="submit" data-strum="3" style="justify-self:start">Send message</button>
+        <button class="btn" type="submit" style="justify-self:start">Send message</button>
       </form>
       <div class="info">
         <div><span class="ico"><svg viewBox="0 0 16 16"><rect x="1.5" y="3" width="13" height="10" rx="2"/><path d="M2 4l6 5 6-5"/></svg></span><p><em>Email</em><a href="mailto:<?=h($me['email'])?>"><?=h($me['email'])?></a></p></div>
@@ -338,10 +373,13 @@ footer img{width: 3rem;}
   </section>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="script.js" defer></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
@@ -351,7 +389,7 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 
 /* ---- 3D scene: acoustic_guitar.glb ---- */
-const stage = $('.stage'), loadEl = $('#load');
+const stage = $('.stage'), loadEl = $('#load'), bgEl = $('#bg');
 const renderer = new THREE.WebGLRenderer({canvas: $('#gl'), antialias: true, alpha: true});
 renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -369,7 +407,8 @@ const ZTOP = -0.513;          // headstock tip along the guitar's length axis (m
 const STRING_ORDER = ['mi basso','la','re','sol','si','mi cantino'];
 let H = 1, ready = false;
 const strs = [], strMats = new Set();
-new GLTFLoader().load('assets/acoustic_guitar.glb', gltf => {
+const draco = new DRACOLoader().setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');   // the model is Draco-compressed (1.2 MB instead of 23 MB)
+new GLTFLoader().setDRACOLoader(draco).load('assets/acoustic_guitar.glb', gltf => {
   const holder = new THREE.Group();
   holder.add(gltf.scene);
   holder.rotation.x = Math.PI / 2;                             // model lies face-up: stand it up so the face looks at the camera
@@ -398,6 +437,7 @@ const desktopK = [
     {z: .144, vh:.50, yaw:-.25, ax:.70, ay:.5},
     {z:-.040, vh:.30, yaw: .20, ax:.50, ay:.5},
     {z:-.240, vh:.28, yaw:-.15, ax:.25, ay:.5},
+    {z:-.340, vh:.27, yaw: .12, ax:.25, ay:.4},   // projects: just below the nut
     {z:-.440, vh:.26, yaw: .25, ax:-.07, ay:.25},
 ];
 
@@ -405,6 +445,7 @@ const mobileK = [
     {z: .144, vh:.50, yaw:-.25, ax:.70, ay:.5},
     {z:-.040, vh:.30, yaw: .20, ax:.50, ay:.5},
     {z:-.240, vh:.28, yaw:-.15, ax:.25, ay:.5},
+    {z:-.340, vh:.27, yaw: .12, ax:.25, ay:.4},
     {z:-.440, vh:.26, yaw: .25, ax:-.10, ay:.25},
 ];
 
@@ -418,7 +459,7 @@ media.addEventListener("change", e => {
     K = e.matches ? mobileK : desktopK;
 });
 
-const panels = $$('.panel'), links = $$('nav a'), cur = $('#cur');
+const panels = $$('.panel'), links = $$('header > nav a'), sideLinks = $$('#mobileSidebar nav a'), cur = $('#cur');
 let tops = [], target = 0, p = 0, shown = -1, px = 0, py = 0, vibT = -1;
 
 const measure = () => { tops = panels.map(e => e.offsetTop); onScroll(); };
@@ -426,7 +467,8 @@ const onScroll = () => {
   let i = 0;
   for (let k = 0; k < tops.length; k++) if (scrollY >= tops[k] - 1) i = k;
   const end = i < tops.length - 1 ? tops[i + 1] : tops[i] + 1;
-  target = Math.min(3, i + (i < 3 ? Math.min(1, (scrollY - tops[i]) / (end - tops[i])) : 0));
+  const last = tops.length - 1;
+  target = Math.min(last, i + (i < last ? Math.min(1, (scrollY - tops[i]) / (end - tops[i])) : 0));
 };
 const resize = () => {
   renderer.setSize(innerWidth, innerHeight, false);
@@ -439,8 +481,9 @@ addEventListener('pointermove', e => { px = e.clientX / innerWidth - .5; py = e.
 const lerp = (a, b, t) => a + (b - a) * t;
 function frame(now) {
   p = reduce ? target : lerp(p, target, .1);
+  if (bgEl) bgEl.style.transform = `translateY(${-p * 1.8}vh)`;   // slow drift on your background image
   if (ready) {
-    const i = Math.min(2, Math.floor(p)), f = p - i, e = f * f * (3 - 2 * f);
+    const i = Math.min(K.length - 2, Math.floor(p)), f = p - i, e = f * f * (3 - 2 * f);
     const v = k => lerp(K[i][k], K[i + 1][k], e), m = innerWidth < 800;
     const vh = v('vh') * (m ? 1.25 : 1);
     const ax = v('ax');
@@ -477,6 +520,7 @@ function frame(now) {
   if (idx !== shown) {
     shown = idx; cur.textContent = '0' + (idx + 1);
     links.forEach((l, k) => l.classList.toggle('on', k === idx));
+    sideLinks.forEach((l, k) => l.classList.toggle('on', k === idx));
   }
   requestAnimationFrame(frame);
 }
@@ -540,7 +584,7 @@ const toggle = (btn, el) => btn.addEventListener('click', () => {
 });
 toggle($('#achBtn'), $('#achList'));
 toggle($('#msgBtn'), $('#msgForm'));
-$('#cLink').addEventListener('click', e => { e.preventDefault(); const f = $('#msgForm'); f.hidden = false; $('#msgBtn').setAttribute('aria-expanded','true'); f.querySelector('input[name=name]').focus(); });
+$('#cLink').addEventListener('click', e => { e.preventDefault(); const f = $('#msgForm'); f.hidden = false; $('#msgBtn').setAttribute('aria-expanded','true'); f.querySelector('input[name=from_name]').focus(); });
 
 if (location.hash) setTimeout(() => $(location.hash)?.scrollIntoView(), 50);
 const menuToggle = document.getElementById('menuToggle');
