@@ -312,7 +312,7 @@ footer img{width: 3rem;}
     <div class="copy">
       <p class="tag">About me</p>
       <h2>A developer<br>with a <span class="hl">rhythm.</span></h2>
-      <p class="lead">I'm <?=h($me['first'].' '.$me['last'])?>, a BSIT student passionate about web development, design, and creating impactful digital solutions.</p>
+      <p class="lead">I'm <?=h($me['first'].' '.$me['last'])?>, a dedicated and driven aspiring developer focused on building clean, efficient, and user-centered web applications. I value structured code, responsive design, and attention to detail. With every project, I aim to deliver high-quality digital experiences while continuously improving my technical expertise and problem-solving skills.</p>
       <button class="btn chord" id="play" type="button" aria-live="polite">
         <svg viewBox="0 0 14 14" fill="currentColor"><path d="M3 1l9 6-9 6z"/></svg><span>Play a chord</span><small id="cname">Em</small>
       </button>
