@@ -29,8 +29,11 @@ $youtubeId='4zvdGliW8Ek';
 
 // Projects: replace these placeholders. 'image' is optional (e.g. assets/projects/shop.jpg), 'link' is optional.
 $projects=[
-  ['The Capital Barbershop','A portfolio and appointment booking website for a local barbershop.','HTML · CSS · JS','SUPABASE','assets/projects/project1.jpg'],
-  ['House of Origami','Origami school portfolio website.','HTML · CSS · JS','','assets/projects/project2.jpg'],
+  ['The Capital Barbershop','A portfolio and appointment booking website for a local barbershop.','HTML · CSS · JS · SUPABASE','thecapitalbarbersop.online','assets/projects/project1.jpg'],
+  ['House of Origami','Origami school portfolio website.','HTML · CSS · JS','https://house-of-origami-website.vercel.app/','assets/projects/project2.png'],
+  ['IntraGo','A Java application that uses graph data structures to determine the nearest location in Intramuros efficiently. It implements pathfinding logic to calculate optimal routes.','Java','','assets/projects/project3.jpg'],
+  ['Restaurant POS','A Java-based POS system that handles orders, billing, and inventory. Designed with a clean UI and efficient workflow for small businesses.','Java','','assets/projects/project2.jpg'],
+  ['Inventory System','A Java-based inventory system designed to track products, manage stock levels, and organize data efficiently. It features a structured interface for adding, updating, and monitoring items.','Java','','assets/projects/project2.jpg'],
 ];
 
 // The contact form is sent with EmailJS (see script.js), so no PHP form handling is needed.
