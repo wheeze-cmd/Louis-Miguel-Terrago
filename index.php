@@ -9,6 +9,9 @@ $bgImage='assets/background.jpg';
 $bgDim=0.55;   // 0 = image at full brightness, 1 = fully dark. Raise it if text is hard to read.
 $hasBg=$bgImage&&is_file(__DIR__.'/'.$bgImage);
 
+// CV: put your CV file at this path (e.g. assets/Terrago_CV.pdf) or change the path/filename.
+$cvFile='assets/Louis_Miguel_Terrago_CV.pdf';
+
 $me=[
   'first'=>'Louis Miguel','last'=>'Terrago','role'=>'BSIT Student',
   'skills'=>['Web Developer','Graphic Designer','Pitch Leader'],
@@ -30,10 +33,11 @@ $youtubeId='4zvdGliW8Ek';
 // Projects: replace these placeholders. 'image' is optional (e.g. assets/projects/shop.jpg), 'link' is optional.
 $projects=[
   ['The Capital Barbershop','A portfolio and appointment booking website for a local barbershop.','HTML · CSS · JS · SUPABASE','https://thecapitalbarbersop.online','assets/projects/project1.png'],
+  ['ASR with Data Extraction','Using Whisper API for speech recognition and Ollama Qwen for data extraction.','TAILWIND · WHISPER · OLLAMA QWEN','https://github.com/wheeze-cmd/Project-Nexus','assets/projects/project7.png'],
   ['House of Origami','Origami school portfolio website.','HTML · CSS · JS','https://house-of-origami-website.vercel.app/','assets/projects/project2.png'],
-  ['IntraGo','A Java application that uses graph data structures to determine the nearest location in Intramuros efficiently. It implements pathfinding logic to calculate optimal routes.','Java','','assets/projects/project3.jpg'],
-  ['Restaurant POS','A Java-based POS system that handles orders, billing, and inventory. Designed with a clean UI and efficient workflow for small businesses.','Java','','assets/projects/project4.png'],
-  ['Inventory System','A Java-based inventory system designed to track products, manage stock levels, and organize data efficiently. It features a structured interface for adding, updating, and monitoring items.','Java','','assets/projects/project5.png'],
+  ['IntraGo','A Java application that uses graph data structures to determine the nearest location in Intramuros efficiently. It implements pathfinding logic to calculate optimal routes.','JAVA','https://github.com/wheeze-cmd/Java-Swing-Graph-Data-Structure','assets/projects/project3.jpg'],
+  ['Restaurant POS','A Java-based POS system that handles orders, billing, and inventory. Designed with a clean UI and efficient workflow for small businesses.','JAVA','https://github.com/wheeze-cmd/Java-Swing-Restaurant-Ordering-System','assets/projects/project4.png'],
+  ['Inventory System','A Java-based inventory system designed to track products, manage stock levels, and organize data efficiently. It features a structured interface for adding, updating, and monitoring items.','JAVA','https://github.com/wheeze-cmd/Java-Swing-Inventory-System','assets/projects/project5.png'],
 ];
 
 // The contact form is sent with EmailJS (see script.js), so no PHP form handling is needed.
@@ -85,6 +89,10 @@ h2{font-size:clamp(2.2rem,4.4vw,3.4rem)}
 .btn:hover{background:rgba(84,104,255,.28);box-shadow:0 0 24px rgba(84,104,255,.45)}
 .btn:focus-visible,nav a:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--ice);outline-offset:3px}
 .btn svg{width:14px;height:14px}
+.hero-btns{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem;margin-top:1.8rem}
+.hero-btns .btn{margin-top:0}
+.btn.solid{background:var(--blue);color:#fff}
+.btn.solid:hover{background:#6b7cff}
 .chord small{color:var(--mist);margin-left:.2rem}
 .hint{position:absolute;left:8vw;bottom:2.2rem;font-size:.7rem;color:var(--mist);display:flex;gap:.8rem;align-items:center}
 .hint i{width:16px;height:26px;border:1px solid var(--mist);border-radius:9px;position:relative}
@@ -303,7 +311,10 @@ footer img{width: 3rem;}
       <h1><?=h($me['first'])?><br><span class="hl"><?=h($me['last'])?></span></h1>
       <ul class="skills"><?php foreach($me['skills'] as $s){?><li><?=h($s)?></li><?php }?></ul>
       <p class="lead"><?=h($me['tagline'])?></p>
-      <a class="btn" href="#about">Explore my journey <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 1l6 6-6 6"/></svg></a>
+      <div class="hero-btns">
+        <a class="btn" href="#about">Explore my journey <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 1l6 6-6 6"/></svg></a>
+        <a class="btn solid" href="<?=h($cvFile)?>" download>Download CV <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 1v8M3 6l4 4 4-4M2 13h10"/></svg></a>
+      </div>
     </div>
     <div class="hint"><i></i>Scroll up the guitar · click it to strum</div>
   </section>
@@ -340,7 +351,7 @@ footer img{width: 3rem;}
     <div class="copy">
       <p class="tag">Projects</p>
       <h2>Things I've<br><span class="hl">built.</span></h2>
-      <p class="lead">A few projects I'm proud of. Replace these placeholders with your own work.</p>
+      <p class="lead">A few projects I'm proud of.</p>
       <div class="proj">
         <?php foreach($projects as [$t,$d,$stack,$link,$img]){$has=$img&&is_file(__DIR__.'/'.$img);?>
         <article class="card">
@@ -440,7 +451,7 @@ const desktopK = [
     {z: .144, vh:.50, yaw:-.25, ax:.70, ay:.5},
     {z:-.040, vh:.30, yaw: .20, ax:.50, ay:.5},
     {z:-.240, vh:.28, yaw:-.15, ax:.25, ay:.5},
-    {z:-.340, vh:.27, yaw: .12, ax:.25, ay:.4},   // projects: just below the nut
+    {z:-.340, vh:.27, yaw: .12, ax:.15, ay:.4},   // projects: just below the nut
     {z:-.440, vh:.26, yaw: .25, ax:-.07, ay:.25},
 ];
 
@@ -448,7 +459,7 @@ const mobileK = [
     {z: .144, vh:.50, yaw:-.25, ax:.70, ay:.5},
     {z:-.040, vh:.30, yaw: .20, ax:.50, ay:.5},
     {z:-.240, vh:.28, yaw:-.15, ax:.25, ay:.5},
-    {z:-.340, vh:.27, yaw: .12, ax:.25, ay:.4},
+    {z:-.340, vh:.27, yaw: .12, ax:.15, ay:.4},
     {z:-.440, vh:.26, yaw: .25, ax:-.10, ay:.25},
 ];
 
